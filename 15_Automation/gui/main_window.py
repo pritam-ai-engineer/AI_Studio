@@ -1,12 +1,14 @@
+import sys
+
 from PySide6.QtWidgets import (
     QApplication,
-    QLabel,
+    QListWidget,
+    QHBoxLayout,
     QMainWindow,
-    QVBoxLayout,
     QWidget,
 )
 
-import sys
+from gui.pages.dashboard_page import DashboardPage
 
 
 class MainWindow(QMainWindow):
@@ -15,31 +17,35 @@ class MainWindow(QMainWindow):
 
         super().__init__()
 
-        self.setWindowTitle("AI Studio Pro v2.0")
+        self.setWindowTitle("AI Studio Pro v3.0")
 
-        self.resize(1200, 700)
+        self.resize(1500,900)
 
         central = QWidget()
 
         self.setCentralWidget(central)
 
-        layout = QVBoxLayout()
+        layout = QHBoxLayout(central)
 
-        central.setLayout(layout)
+        self.sidebar = QListWidget()
 
-        title = QLabel("🚀 AI Studio Pro")
+        self.sidebar.setFixedWidth(220)
 
-        title.setStyleSheet("""
-            font-size:28px;
-            font-weight:bold;
-            padding:20px;
-        """)
+        self.sidebar.addItems([
+            "🏠 Dashboard",
+            "🐵 Characters",
+            "🎬 Episodes",
+            "📝 Prompts",
+            "🖼 Assets",
+            "📊 Analytics",
+            "⚙ Settings"
+        ])
 
-        layout.addWidget(title)
+        layout.addWidget(self.sidebar)
 
-        layout.addWidget(
-            QLabel("Welcome to AI Studio Pro Desktop")
-        )
+        self.dashboard = DashboardPage()
+
+        layout.addWidget(self.dashboard)
 
 
 app = QApplication(sys.argv)
