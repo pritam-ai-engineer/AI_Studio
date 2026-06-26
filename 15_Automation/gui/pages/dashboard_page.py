@@ -1,15 +1,24 @@
+from pathlib import Path
+
 from PySide6.QtCore import Qt
+
 from PySide6.QtWidgets import (
-    QLabel,
-    QFrame,
-    QGridLayout,
-    QHBoxLayout,
-    QVBoxLayout,
     QWidget,
+    QLabel,
+    QGridLayout,
+    QVBoxLayout,
+    QFrame,
+)
+
+from services.database_service import DatabaseService
+
+
+EPISODES = Path(
+    "20_Projects/Chimpanzee_Crazy/Episodes"
 )
 
 
-class StatCard(QFrame):
+class Card(QFrame):
 
     def __init__(self, title, value):
 
@@ -17,35 +26,23 @@ class StatCard(QFrame):
 
         self.setFrameShape(QFrame.StyledPanel)
 
-        self.setStyleSheet("""
-            QFrame{
-                background:#ffffff;
-                border:1px solid #dddddd;
-                border-radius:10px;
-            }
-        """)
-
         layout = QVBoxLayout(self)
 
-        titleLabel = QLabel(title)
+        label = QLabel(title)
 
-        titleLabel.setAlignment(Qt.AlignCenter)
-
-        titleLabel.setStyleSheet("""
-            font-size:14px;
-            color:gray;
-        """)
+        label.setAlignment(Qt.AlignCenter)
 
         valueLabel = QLabel(str(value))
 
         valueLabel.setAlignment(Qt.AlignCenter)
 
         valueLabel.setStyleSheet("""
-            font-size:28px;
+            font-size:30px;
             font-weight:bold;
         """)
 
-        layout.addWidget(titleLabel)
+        layout.addWidget(label)
+
         layout.addWidget(valueLabel)
 
 
@@ -55,38 +52,66 @@ class DashboardPage(QWidget):
 
         super().__init__()
 
-        main = QVBoxLayout(self)
+        db = DatabaseService()
+
+        characters = db.count_characters()
+
+        prompts = db.count_prompts()
+
+        episodes = len(
+            list(
+                EPISODES.glob("Episode_*")
+            )
+        )
+
+        db.close()
+
+        layout = QVBoxLayout(self)
 
         title = QLabel("Dashboard")
 
         title.setStyleSheet("""
-            font-size:24px;
+            font-size:28px;
             font-weight:bold;
-            padding:10px;
         """)
 
-        main.addWidget(title)
+        layout.addWidget(title)
 
         cards = QGridLayout()
 
-        cards.addWidget(StatCard("Characters",11),0,0)
-        cards.addWidget(StatCard("Episodes",6),0,1)
-        cards.addWidget(StatCard("Prompts",12),0,2)
-        cards.addWidget(StatCard("Assets",150),0,3)
+        cards.addWidget(
+            Card("Characters", characters),
+            0,
+            0,
+        )
 
-        main.addLayout(cards)
+        cards.addWidget(
+            Card("Episodes", episodes),
+            0,
+            1,
+        )
+
+        cards.addWidget(
+            Card("Prompts", prompts),
+            0,
+            2,
+        )
+
+        cards.addWidget(
+            Card("Assets", 0),
+            0,
+            3,
+        )
+
+        layout.addLayout(cards)
 
         recent = QLabel("""
 
 Recent Activity
 
-✓ Episode_007 Created
-
-✓ JungleKing Created
-
-✓ Prompt Saved
-
 ✓ AI Studio Started
+
+✓ Dashboard Loaded
 
 """)
 
@@ -95,6 +120,6 @@ Recent Activity
             padding:20px;
         """)
 
-        main.addWidget(recent)
+        layout.addWidget(recent)
 
-        main.addStretch()
+        layout.addStretch()
