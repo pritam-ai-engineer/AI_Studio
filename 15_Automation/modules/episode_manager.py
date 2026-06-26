@@ -1,4 +1,4 @@
-from pathlib import Path
+from utils.logger import log
 
 FILES = [
     "Script.md",
@@ -7,6 +7,7 @@ FILES = [
     "Thumbnail.md",
     "Metadata.md",
 ]
+
 
 def create_episode(base_path, episode_number):
 
@@ -17,4 +18,6 @@ def create_episode(base_path, episode_number):
     for file in FILES:
         (episode / file).touch(exist_ok=True)
 
-    return episode
+    log(f"Episode {episode_number:03d} Created")
+
+    print(f"\n✅ Episode_{episode_number:03d} Created\n")

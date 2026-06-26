@@ -1,4 +1,9 @@
 from pathlib import Path
+import sqlite3
+
+from utils.logger import log
+
+DATABASE = Path("D:/AI_Studio/15_Automation/database/studio.db")
 
 FOLDERS = [
     "images",
@@ -21,4 +26,19 @@ def create_character(base_path, character_name):
 
     (character / "character.md").touch(exist_ok=True)
 
-    print(f"✅ Character '{character_name}' created successfully!")
+    conn = sqlite3.connect(DATABASE)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT OR IGNORE INTO characters(name) VALUES(?)",
+        (character_name,),
+    )
+
+    conn.commit()
+
+    conn.close()
+
+    log(f"Character {character_name} Created")
+
+    print(f"\n✅ Character '{character_name}' Created\n")
