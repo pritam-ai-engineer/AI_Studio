@@ -9,29 +9,37 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+# Pages
 from gui.pages.dashboard_page import DashboardPage
 from gui.pages.character_page import CharacterPage
 from gui.pages.episode_page import EpisodePage
+from gui.pages.prompt_page import PromptPage
 
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
-
         super().__init__()
 
-        self.setWindowTitle("AI Studio Pro v3.2")
+        self.setWindowTitle("AI Studio Pro v3.3")
 
-        self.resize(1500,900)
+        self.resize(1500, 900)
+
+        # -----------------------------
+        # Central Widget
+        # -----------------------------
 
         central = QWidget()
-
         self.setCentralWidget(central)
 
-        layout = QHBoxLayout(central)
+        layout = QHBoxLayout()
+        central.setLayout(layout)
+
+        # -----------------------------
+        # Sidebar
+        # -----------------------------
 
         self.sidebar = QListWidget()
-
         self.sidebar.setFixedWidth(220)
 
         self.sidebar.addItems([
@@ -46,26 +54,45 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.sidebar)
 
+        # -----------------------------
+        # Stack Widget
+        # -----------------------------
+
         self.stack = QStackedWidget()
 
-        self.dashboard = DashboardPage()
+        # Dashboard
+        self.dashboardPage = DashboardPage()
+        self.stack.addWidget(self.dashboardPage)
 
-        self.characters = CharacterPage()
+        # Characters
+        self.characterPage = CharacterPage()
+        self.stack.addWidget(self.characterPage)
 
-        self.episodes = EpisodePage()
+        # Episodes
+        self.episodePage = EpisodePage()
+        self.stack.addWidget(self.episodePage)
 
-        self.stack.addWidget(self.dashboard)
+        # Prompts
+        self.promptPage = PromptPage()
+        self.stack.addWidget(self.promptPage)
 
-        self.stack.addWidget(self.characters)
+        # Assets (Placeholder)
+        self.assetsPage = QWidget()
+        self.stack.addWidget(self.assetsPage)
 
-        self.stack.addWidget(self.episodes)
+        # Analytics (Placeholder)
+        self.analyticsPage = QWidget()
+        self.stack.addWidget(self.analyticsPage)
 
-        # Placeholder pages
-        for _ in range(4):
-
-            self.stack.addWidget(QWidget())
+        # Settings (Placeholder)
+        self.settingsPage = QWidget()
+        self.stack.addWidget(self.settingsPage)
 
         layout.addWidget(self.stack)
+
+        # -----------------------------
+        # Events
+        # -----------------------------
 
         self.sidebar.currentRowChanged.connect(
             self.stack.setCurrentIndex
@@ -86,5 +113,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
